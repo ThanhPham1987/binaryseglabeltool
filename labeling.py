@@ -106,7 +106,7 @@ print("Image Segmentation Labeling tool")
 print("Instruction: ")
 print("Pen: w; Eraser: e; Save: s; +pensize: z; -pensize: x; Reload: r")
 print("Next image: f")
-print("Previous image: b")
+print("Previous image: d")
 
 image_folder = args.images
 label_folder = args.labels

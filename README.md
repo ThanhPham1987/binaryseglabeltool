@@ -29,5 +29,5 @@ Pen: w; Eraser: e;
 Save: s; Reload: r; 
 +Pensize: z; -Pensize: x; 
 Next image: f
-Previous image: b
+Previous image: d
 ```
