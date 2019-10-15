@@ -140,7 +140,6 @@ def reload_images():
     label_path = os.path.join(label_folder, image_name_list[img_index])
     img = cv2.imread(img_path)
     label = cv2.imread(label_path, 0)
-    label = refine_mask(label)
     last_label = label
 
 def save_label():
@@ -151,7 +150,8 @@ def save_label():
 # Initialize
 print("Image Segmentation Labeling tool")
 print("Instruction: ")
-print("Pen: w; Eraser: e; Save: s; +pensize: z; -pensize: x; Reload: r")
+print("Pen: w; Eraser: e; Magic: m; Undo Magic: n; Line: t;")
+print("Fill internal spaces: g")
 print("Next image: f")
 print("Previous image: d")
 
@@ -179,6 +179,8 @@ while(1):
         break
     elif k == ord('s'): # Save image
         save_label()
+    elif k == ord('g'): # Save image
+        label = refine_mask(label)
     elif k == ord('w'): # Pen mode
         mode = "pen"
     elif k == ord('e'): # Eraser mode
