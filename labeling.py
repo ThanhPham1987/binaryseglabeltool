@@ -130,6 +130,8 @@ def refine_mask(input_mask):
     cv2.floodFill(im_floodfill, None, (100, 100), 255)
     cv2.floodFill(im_floodfill, None, (150, 150), 255)
     cv2.floodFill(im_floodfill, None, (200, 200), 255)
+    cv2.floodFill(im_floodfill, None, (250, 200), 255)
+    cv2.floodFill(im_floodfill, None, (300, 200), 255)
 
     im_floodfill = cv2.resize(im_floodfill, (320, 240))
 
