@@ -57,7 +57,7 @@ def interactive_drawing(event, x, y, flags, param):
 
             connectivity = 4 # or 8?
             newMaskVal = 255
-            flags = connectivity + (newMaskVal << 8)
+            flags = connectivity + (newMaskVal << 8) + cv2.FLOODFILL_FIXED_RANGE
 
             # tmp = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
             tmp = cv2.GaussianBlur(img,(3,3),cv2.BORDER_DEFAULT)
@@ -67,7 +67,7 @@ def interactive_drawing(event, x, y, flags, param):
             mask = np.zeros((h + 2, w + 2), np.uint8)
 
             # Floodfill from point (0, 0)
-            cv2.floodFill(tmp, mask, (x, y), 255, loDiff=(6, 6, 6), upDiff=(6, 6, 6), flags=flags)
+            cv2.floodFill(tmp, mask, (x, y), 255, loDiff=(20, 20, 20), upDiff=(20, 20, 20), flags=flags)
 
             # cv2.imshow("hsv", hsv)
             # cv2.waitKey(0)
