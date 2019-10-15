@@ -89,6 +89,7 @@ print("Previous image: b")
 image_folder = args.images
 label_folder = args.labels
 image_name_list = sorted(list(os.listdir(image_folder)))
+image_name_list = [path for path in image_name_list if path.endswith(".jpg") or path.endswith(".png") ]
 img_index = 0
 if len(image_name_list) == 0:
     print("Error reading image folder:" +  image_folder)
