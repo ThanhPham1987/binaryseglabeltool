@@ -44,6 +44,7 @@ def interactive_drawing(event, x, y, flags, param):
         # If in "line" mode, save the first point
         if mode == "line":
             line_begin = (x,y)
+            line_end = (x,y)
 
     elif event==cv2.EVENT_MOUSEMOVE:
 
