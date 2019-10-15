@@ -1,0 +1,4 @@
+image/*.png
+image/*.jpg
+image_gt/*.png
+image_gt/*.jpg
