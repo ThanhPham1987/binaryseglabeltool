@@ -29,11 +29,12 @@ img_path = None
 img = None
 label_path = None
 label = None
+last_label = None
 
 
 # mouse callback function
 def interactive_drawing(event, x, y, flags, param):
-    global ix, iy, drawing, mode, label
+    global ix, iy, drawing, mode, label, last_label, img
     if event==cv2.EVENT_LBUTTONDOWN:
         drawing=True
         ix,iy=x,y
@@ -50,7 +51,31 @@ def interactive_drawing(event, x, y, flags, param):
             iy=y    
     elif event==cv2.EVENT_LBUTTONUP:
         drawing=False
+
+        if mode == "magic":
+            last_label = label # backup
+
+            connectivity = 4 # or 8?
+            newMaskVal = 255
+            flags = connectivity + (newMaskVal << 8)
+
+            # tmp = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            tmp = cv2.GaussianBlur(img,(3,3),cv2.BORDER_DEFAULT)
+            # Mask used to flood filling.
+            # Notice the size needs to be 2 pixels than the image.
+            h, w = tmp.shape[:2]
+            mask = np.zeros((h + 2, w + 2), np.uint8)
+
+            # Floodfill from point (0, 0)
+            cv2.floodFill(tmp, mask, (x, y), 255, loDiff=(6, 6, 6), upDiff=(6, 6, 6), flags=flags)
+
+            # cv2.imshow("hsv", hsv)
+            # cv2.waitKey(0)
+
+            label = label | mask[1:-1, 1:-1]
+
     return x,y
+
 
 
 def combine_img_label(img, label):
@@ -89,12 +114,13 @@ def refine_mask(input_mask):
     return input_mask | im_floodfill_inv
 
 def reload_images():
-    global img, img_path, label, label_path, image_folder, label_folder, image_name_list, img_index
+    global img, img_path, label, label_path, image_folder, label_folder, image_name_list, img_index, last_label
     img_path = os.path.join(image_folder, image_name_list[img_index])
     label_path = os.path.join(label_folder, image_name_list[img_index])
     img = cv2.imread(img_path)
     label = cv2.imread(label_path, 0)
     label = refine_mask(label)
+    last_label = label
 
 def save_label():
     global label, label_path, label_folder, image_name_list, img_index
@@ -136,6 +162,10 @@ while(1):
         mode = "pen"
     elif k == ord('e'): # Eraser mode
         mode = "eraser"
+    elif k == ord('m'): # Eraser mode
+        mode = "magic"
+    elif k == ord('n'): # Undo magic
+        label = last_label
     elif k == ord('z'): # Increase pen size
         pensize += 1
     elif k == ord('x'): # Decrease pen size
