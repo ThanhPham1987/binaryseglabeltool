@@ -31,25 +31,40 @@ label_path = None
 label = None
 last_label = None
 
+line_begin = (-1, -1)
+line_end = (-1, -1)
 
 # mouse callback function
 def interactive_drawing(event, x, y, flags, param):
-    global ix, iy, drawing, mode, label, last_label, img
+    global ix, iy, drawing, mode, label, last_label, img, line_begin, line_end
     if event==cv2.EVENT_LBUTTONDOWN:
         drawing=True
         ix,iy=x,y
+
+        # If in "line" mode, save the first point
+        if mode == "line":
+            line_begin = (x,y)
+
     elif event==cv2.EVENT_MOUSEMOVE:
 
         if mode == "pen":
             color = 255
-        else:
+        elif mode == "eraser":
             color = 0
 
         if drawing == True:
-            cv2.line(label, (ix,iy), (x,y), (color, color, color), pensize)
-            ix=x
-            iy=y    
+            
+            if mode == "pen":
+                cv2.line(label, (ix,iy), (x,y), (color, color, color), pensize)
+                ix=x
+                iy=y
+
+            # If in "line" mode, save the first point
+            elif mode == "line":
+                line_end = (x,y)   
+
     elif event==cv2.EVENT_LBUTTONUP:
+
         drawing=False
 
         if mode == "magic":
@@ -69,10 +84,10 @@ def interactive_drawing(event, x, y, flags, param):
             # Floodfill from point (0, 0)
             cv2.floodFill(tmp, mask, (x, y), 255, loDiff=(20, 20, 20), upDiff=(20, 20, 20), flags=flags)
 
-            # cv2.imshow("hsv", hsv)
-            # cv2.waitKey(0)
-
             label = label | mask[1:-1, 1:-1]
+
+        elif mode == "line":
+            cv2.line(label, line_begin, line_end, (255, 255, 255), pensize)
 
     return x,y
 
@@ -90,6 +105,11 @@ def combine_img_label(img, label):
     cv2.line(output_img, (120, 35), (140, 35), (0, 0, 255), pensize)
     output_img = cv2.putText(output_img, 'Image: {} / {}'.format(img_index+1, len(image_name_list)), (10, 60) , cv2.FONT_HERSHEY_SIMPLEX,  0.5, (0, 255, 0), 1, cv2.LINE_AA) 
     cv2.line(output_img, (120, 35), (140, 35), (0, 0, 255), pensize)
+
+    # If in line mode, draw temporary line
+    if mode == "line" and drawing:
+        cv2.line(output_img, line_begin, line_end, (0, 0, 255), pensize)
+
     return output_img
 
 def refine_mask(input_mask):
@@ -162,8 +182,10 @@ while(1):
         mode = "pen"
     elif k == ord('e'): # Eraser mode
         mode = "eraser"
-    elif k == ord('m'): # Eraser mode
+    elif k == ord('m'): # Magic mode
         mode = "magic"
+    elif k == ord('t'): # Line mode
+        mode = "line"
     elif k == ord('n'): # Undo magic
         label = last_label
     elif k == ord('z'): # Increase pen size

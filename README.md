@@ -25,7 +25,7 @@ python labeling.py -i './image/' -l './image_gt/'
 - Instruction: 
 
 ```
-Pen: w; Eraser: e; Magic: m; Undo Magic: n
+Pen: w; Eraser: e; Magic: m; Undo Magic: n; Line: t
 Save: s; Reload: r; 
 +Pensize: z; -Pensize: x; 
 Next image: f
