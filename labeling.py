@@ -67,12 +67,34 @@ def combine_img_label(img, label):
     cv2.line(output_img, (120, 35), (140, 35), (0, 0, 255), pensize)
     return output_img
 
+def refine_mask(input_mask):
+    # Copy the thresholded image.
+    im_floodfill = input_mask.copy()
+
+    # Mask used to flood filling.
+    # Notice the size needs to be 2 pixels than the image.
+    h, w = input_mask.shape[:2]
+
+    # Floodfill from point (0, 0)
+    cv2.floodFill(im_floodfill, None, (0, 0), 255)
+    cv2.floodFill(im_floodfill, None, (319, 0), 255)
+    cv2.floodFill(im_floodfill, None, (319, 239), 255)
+    cv2.floodFill(im_floodfill, None, (0, 239), 255)
+
+    im_floodfill = cv2.resize(im_floodfill, (320, 240))
+
+    # Invert floodfilled image
+    im_floodfill_inv = cv2.bitwise_not(im_floodfill)
+
+    return input_mask | im_floodfill_inv
+
 def reload_images():
     global img, img_path, label, label_path, image_folder, label_folder, image_name_list, img_index
     img_path = os.path.join(image_folder, image_name_list[img_index])
     label_path = os.path.join(label_folder, image_name_list[img_index])
     img = cv2.imread(img_path)
     label = cv2.imread(label_path, 0)
+    label = refine_mask(label)
 
 def save_label():
     global label, label_path, label_folder, image_name_list, img_index
