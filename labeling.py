@@ -47,15 +47,15 @@ def interactive_drawing(event, x, y, flags, param):
 
     elif event==cv2.EVENT_MOUSEMOVE:
 
-        if mode == "pen":
-            color = 255
-        elif mode == "eraser":
-            color = 0
-
         if drawing == True:
             
             if mode == "pen":
-                cv2.line(label, (ix,iy), (x,y), (color, color, color), pensize)
+                cv2.line(label, (ix,iy), (x,y), (255, 255, 255), pensize)
+                ix=x
+                iy=y
+
+            elif mode == "eraser":
+                cv2.line(label, (ix,iy), (x,y), (0, 0, 0), pensize)
                 ix=x
                 iy=y
 
