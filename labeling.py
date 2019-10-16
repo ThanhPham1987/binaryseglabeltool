@@ -19,6 +19,12 @@ argparser.add_argument(
 args = argparser.parse_args()
 
 
+if not os.path.exists(args.images):
+    print("Wrong image folder path")
+
+if not os.path.exists(args.images):
+    print("Wrong label folder path")
+
 # Global variables
 drawing = False # true if mouse is pressed
 mode = "pen" # "pen" or "eraser"
