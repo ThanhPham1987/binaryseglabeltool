@@ -14,7 +14,7 @@ argparser.add_argument(
 
 argparser.add_argument(
     '-l',
-    '--labels', default="./image_gt/",
+    '--labels', default="./image_gt_bin/",
     help='image label folder')
 
 args = argparser.parse_args()
