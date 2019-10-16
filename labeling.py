@@ -13,7 +13,7 @@ argparser.add_argument(
 
 argparser.add_argument(
     '-l',
-    '--labels', default="./image_gt/",
+    '--labels', default="./image_gt_bin/",
     help='image label folder')
 
 args = argparser.parse_args()
@@ -145,7 +145,13 @@ def reload_images():
     img_path = os.path.join(image_folder, image_name_list[img_index])
     label_path = os.path.join(label_folder, image_name_list[img_index])
     img = cv2.imread(img_path)
-    label = cv2.imread(label_path, 0)
+
+    # If found a label, load it, otherwise, create a new one
+    if os.path.exists(label_path):
+        label = cv2.imread(label_path, 0)
+    else:
+        label = np.zeros((img.shape[0], img.shape[1]), dtype=np.uint8)
+
     last_label = label
 
 def save_label():
